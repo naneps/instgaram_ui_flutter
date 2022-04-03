@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:instgaram_ui_flutter/responsive/mobile_screen_layout.dart';
+import 'package:instgaram_ui_flutter/responsive/responsive_layout_screen.dart';
+import 'package:instgaram_ui_flutter/responsive/web_screen_layout.dart';
+import 'package:instgaram_ui_flutter/utils/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,11 +16,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Instagram',
-      theme: ThemeData(
-        // is not restarted.
-        primarySwatch: Colors.blue,
+      theme: ThemeData.dark()
+          .copyWith(scaffoldBackgroundColor: mobileBackgroundColor),
+      home: ResponsiveLayout(
+        mobileScreenLayout: MobileScreenLayout(),
+        webScreenLayout: WebScreenLayout(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:instgaram_ui_flutter/utils/dimensions.dart';
 
-class ResponsiveLatout extends StatelessWidget {
+class ResponsiveLayout extends StatelessWidget {
   final Widget? webScreenLayout;
   final Widget? mobileScreenLayout;
-  const ResponsiveLatout(
-      {this.webScreenLayout, this.mobileScreenLayout, Key? key})
+  const ResponsiveLayout(
+      {required this.webScreenLayout,
+      required this.mobileScreenLayout,
+      Key? key})
       : super(key: key);
 
   @override
