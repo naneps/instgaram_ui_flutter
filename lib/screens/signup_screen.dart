@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:instgaram_ui_flutter/resources/auth_method.dart';
 import 'package:instgaram_ui_flutter/utils/colors.dart';
+import 'package:instgaram_ui_flutter/utils/utils.dart';
 import 'package:instgaram_ui_flutter/widgets/text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -15,6 +21,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  Uint8List? _image;
+  final ImagePicker picker = ImagePicker();
   @override
   void dispose() {
     // TODO: implement dispose
@@ -23,6 +31,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _passwordController.dispose();
     _usernameController.dispose();
     _bioController.dispose();
+  }
+
+  Future selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
   }
 
   @override
@@ -48,18 +63,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             Stack(
               children: [
-                CircleAvatar(
-                  radius: 64,
-                  // backgroundColor: NetworkImage(),
-                  backgroundImage: NetworkImage(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPtENZS1gdjgiNbiX6gLEZPDCiKUXSkSo9SY4ZnWPxGwESsCxZeoXUOIQiFsD8ph-WmAc&usqp=CAU",
-                      scale: 5),
-                ),
+                _image != null
+                    ? CircleAvatar(
+                        radius: 64,
+                        // backgroundColor: NetworkImage(),
+                        backgroundImage: MemoryImage(_image!),
+                      )
+                    : CircleAvatar(
+                        radius: 64,
+                        // backgroundColor: NetworkImage(),
+                        backgroundImage: NetworkImage(
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPtENZS1gdjgiNbiX6gLEZPDCiKUXSkSo9SY4ZnWPxGwESsCxZeoXUOIQiFsD8ph-WmAc&usqp=CAU",
+                            scale: 5),
+                      ),
                 Positioned(
                     bottom: -10,
                     left: 80,
                     child: IconButton(
-                        onPressed: () {}, icon: Icon(Icons.add_a_photo)))
+                        onPressed: () async {
+                          // selectImage();
+                          await picker.pickImage(source: ImageSource.gallery);
+                        },
+                        icon: Icon(Icons.add_a_photo)))
               ],
             ),
             SizedBox(
@@ -97,16 +122,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
             SizedBox(
               height: 24,
             ),
-            Container(
-              child: Text("Log in"),
-              width: double.infinity,
-              height: 40,
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              decoration: ShapeDecoration(
-                  color: blueColor,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(4)))),
+            InkWell(
+              onTap: () async {
+                String res = await AuthMethods().signUpUser(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                    username: _usernameController.text,
+                    bio: _bioController.text,
+                    file: _image!);
+
+                print(res);
+              },
+              child: Container(
+                child: Text("Sign Up"),
+                width: double.infinity,
+                height: 40,
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: ShapeDecoration(
+                    color: blueColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(4)))),
+              ),
             ),
             SizedBox(
               height: 12,
